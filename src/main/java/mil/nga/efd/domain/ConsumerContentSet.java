@@ -12,7 +12,7 @@
  *
  * (c) 2009 Solers, Inc.
  ***********************************************************/
-package com.solers.delivery.domain;
+package mil.nga.efd.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

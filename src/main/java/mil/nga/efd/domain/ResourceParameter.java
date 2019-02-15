@@ -12,7 +12,7 @@
  *
  * (c) 2009 Solers, Inc.
  ***********************************************************/
-package com.solers.delivery.domain;
+package mil.nga.efd.domain;
 
 import java.io.Serializable;
 
