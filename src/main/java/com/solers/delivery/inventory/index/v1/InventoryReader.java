@@ -25,7 +25,8 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.Inventory;
 import com.solers.delivery.inventory.index.HeaderStruct;
@@ -38,9 +39,18 @@ import com.solers.util.Filter;
  * and turns its contents into a Java-compatible object graph.
  */
 public final class InventoryReader implements Inventory, Serializable {
-    private static final long serialVersionUID = 1L;
     
-    private static final Logger log = Logger.getLogger(InventoryReader.class);
+	/**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = -2794471991764653807L;
+
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		InventoryReader.class);
+    
     private static final byte version = 1;
     private transient RandomAccessFile in;
     private transient EntryStruct root;
@@ -151,14 +161,13 @@ public final class InventoryReader implements Inventory, Serializable {
     
     @Override
     public void close() {
-        if (in == null) {
-            return;
-        }
-        
-        try {
-            in.close();
-        } catch (IOException ignore) {
-            log.error("Error closing input during shutdown", ignore);
+        if (in != null) {
+	        try {
+	            in.close();
+	        } 
+	        catch (IOException ignore) {
+	            LOGGER.error("Error closing input during shutdown", ignore);
+	        }
         }
     }
        

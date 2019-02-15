@@ -30,7 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.DifferenceInventory;
 import com.solers.delivery.inventory.HashProperties;
@@ -40,9 +41,18 @@ import com.solers.util.Filter;
 import com.solers.util.HashFunction;
 
 public final class DifferenceFileReader implements DifferenceInventory, Serializable {
-    private static final long serialVersionUID = 1L;
     
-    private static final Logger log = Logger.getLogger(DifferenceFileReader.class);
+	/**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = 550415328340289294L;
+
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		DiffParentNode.class);
+    
     private static final String[] PROP_ARRAY = new String[] { 
         HashProperties.ALGORITHM, 
         TimeProperties.TIMESTAMP };
@@ -131,7 +141,7 @@ public final class DifferenceFileReader implements DifferenceInventory, Serializ
                 Node n = readRoot(offset);
                 rootCache.put(n.getPath(), n);
             } catch (IOException ioe) {
-                log.debug("Read failure getting difference roots", ioe);
+                LOGGER.debug("Read failure getting difference roots", ioe);
             }
         }
         
@@ -181,7 +191,7 @@ public final class DifferenceFileReader implements DifferenceInventory, Serializ
         try {
             in.close();
         } catch (IOException ioe) {
-            log.error("Error closing input during shutdown.", ioe);
+        	LOGGER.error("Error closing input during shutdown.", ioe);
         }
     }
 

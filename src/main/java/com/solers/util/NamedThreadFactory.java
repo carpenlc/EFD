@@ -16,11 +16,19 @@ package com.solers.util;
 
 import java.util.concurrent.ThreadFactory;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.solers.delivery.inventory.plugin.PluginLoader;
 
 public class NamedThreadFactory implements ThreadFactory {
 
-    private static final Logger log = Logger.getLogger(NamedThreadFactory.class.getName());
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		NamedThreadFactory.class);
+    
     private static final int DEFAULT_STACK_TRACE_OFFSET = 3;
 
     private String threadName;
@@ -63,7 +71,7 @@ public class NamedThreadFactory implements ThreadFactory {
 
         @Override
         public void uncaughtException(Thread t, Throwable e) {
-            log.error("Thread terminated with exception: " + t.getName(), e);
+            LOGGER.error("Thread terminated with exception: " + t.getName(), e);
         }
     }
 }

@@ -20,7 +20,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.Inventory;
 import com.solers.delivery.inventory.plugin.provider.InventoryProvider;
@@ -29,7 +30,13 @@ import com.solers.delivery.inventory.plugin.provider.ProviderInfo;
 import com.solers.delivery.inventory.plugin.provider.StandardProviderInfo;
 
 public class FileSystemInventoryProvider implements InventoryProvider {
-    private static final Logger log = Logger.getLogger(FileSystemInventoryProvider.class);
+    
+    /**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		FileSystemInventoryProvider.class);
+    
     private static final ProviderInfo info = new StandardProviderInfo(
         "NGA",
         "Filesystem",
@@ -52,7 +59,7 @@ public class FileSystemInventoryProvider implements InventoryProvider {
                 }
             }
         } catch (Exception e) {
-            log.debug("Caught an exception while examining " + resource, e);
+            LOGGER.debug("Caught an exception while examining " + resource, e);
         }
         return false;
     }

@@ -22,12 +22,19 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.plugin.provider.ProviderInfo;
 
 public final class PluginLoader {
-    private static final Logger log = Logger.getLogger(PluginLoader.class);
+	
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		PluginLoader.class);
+    
     private PluginLoader() {
         
     }
@@ -40,7 +47,7 @@ public final class PluginLoader {
             try {
                 return load(PluginLoader.class.getClassLoader().getResources(location));
             } catch (Exception e) {
-                log.error("Could not find plugin resource: " + location, e);
+                LOGGER.error("Could not find plugin resource: " + location, e);
                 return Collections.emptySet();
             }
         }
@@ -63,12 +70,12 @@ public final class PluginLoader {
         Set<ProviderInfo> info = new HashSet<ProviderInfo>(plugins.length);
         for (File plugin : plugins) {
             try {
-                log.info("Loading inventory plugin: " + plugin.getName());
+            	LOGGER.info("Loading inventory plugin: " + plugin.getName());
                 ProviderInfo pi = InventoryPlugin.register(plugin);
-                log.info("Loaded successfully: " + pi.toString());
+                LOGGER.info("Loaded successfully: " + pi.toString());
                 info.add(pi);
             } catch (PluginException pe) {
-                log.warn("Error loading plugin " + location.getAbsolutePath(), pe);
+            	LOGGER.warn("Error loading plugin " + location.getAbsolutePath(), pe);
             }
         }
         return info;

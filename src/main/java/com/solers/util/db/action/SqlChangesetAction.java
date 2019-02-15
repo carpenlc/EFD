@@ -20,7 +20,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.util.db.Database;
 import com.solers.util.db.SqlChangeSet;
@@ -31,7 +32,11 @@ import com.solers.util.db.SqlChangeSetManager;
  */
 public class SqlChangesetAction implements DatabaseAction {
     
-    private static final Logger log = Logger.getLogger(SqlChangesetAction.class);
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		SqlChangesetAction.class);
     
     private File databaseDirectory;
     private File sqlConfig;
@@ -50,16 +55,16 @@ public class SqlChangesetAction implements DatabaseAction {
             SqlChangeSetManager manager = new SqlChangeSetManager(sqlConfig, getVersionFile());
             List<SqlChangeSet> changeSets = manager.getChangeSets();
             for (SqlChangeSet changeSet : changeSets) {
-                log.info("Processing changeset: "+changeSet.getVersion());
+                LOGGER.info("Processing changeset: "+changeSet.getVersion());
                 db.execute(changeSet.getStatements().toArray(new String[]{}));
             }
-            writeVersion(db, manager.getCurrentVersion());
+            writeVersion(manager.getCurrentVersion());
         } catch (IOException ex) {
-            log.error("I/O error processing sql changesets", ex);
+        	LOGGER.error("I/O error processing sql changesets", ex);
         }
     }
     
-    private void writeVersion(Database db, String version) {
+    private void writeVersion(String version) {
         File file = getVersionFile();
         if (file.exists()) {
             file.delete();
@@ -69,7 +74,7 @@ public class SqlChangesetAction implements DatabaseAction {
             writer = new FileWriter(file);
             writer.write(version);
         } catch (IOException ex) {
-            log.error("Error writing version", ex);
+        	LOGGER.error("Error writing version", ex);
         } finally {
             close(writer);
         }
@@ -84,7 +89,7 @@ public class SqlChangesetAction implements DatabaseAction {
             try {
                 closeable.close();
             } catch (IOException ignore) {
-                log.error("Error closing "+closeable+": " + ignore.getMessage(), ignore);
+            	LOGGER.error("Error closing "+closeable+": " + ignore.getMessage(), ignore);
             }
         }
     }

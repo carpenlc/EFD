@@ -26,8 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.solers.delivery.inventory.cifs.CifsNode;
 import com.solers.delivery.inventory.node.AbstractNode;
 import com.solers.delivery.inventory.node.Node;
 
@@ -42,8 +44,17 @@ import com.solers.delivery.inventory.node.Node;
  * taken from.
  */
 final class DiffChildNode extends AbstractNode implements DifferenceNode, Serializable {
-    private static final long serialVersionUID = 1L;
-    protected static final Logger log = Logger.getLogger(DiffChildNode.class);
+    
+    /**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = -2714957874160659072L;
+
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		DiffChildNode.class);
     
     protected DifferenceFileReader diffReader;
     private Node parent;
@@ -154,7 +165,7 @@ final class DiffChildNode extends AbstractNode implements DifferenceNode, Serial
                 EntryStruct newNode = diffReader.readEntry(offset, true);
                 return new DiffChildNode(diffReader, newNode, offset, DiffChildNode.this);
             } catch (IOException ioe) {
-                log.error("Error retrieving child node index: " + index, ioe);
+            	LOGGER.error("Error retrieving child node index: " + index, ioe);
                 return null;
             }
         }

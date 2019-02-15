@@ -24,7 +24,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.node.AbstractNode;
 import com.solers.delivery.inventory.node.Node;
@@ -37,10 +38,18 @@ import com.solers.delivery.inventory.node.Node;
  */
 public class FileNode extends AbstractNode implements Serializable {
 
-    private static final long serialVersionUID = 1l;
+    /**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = 8678820052975632790L;
 
-    private static final Logger log = Logger.getLogger(FileNode.class);
-    private static final boolean IS_DEBUG_ENABLED = log.isDebugEnabled();
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		FileNode.class);
+    
+    private static final boolean IS_DEBUG_ENABLED = LOGGER.isDebugEnabled();
 
     // File object to represent as a Node
     private final File file;
@@ -103,12 +112,12 @@ public class FileNode extends AbstractNode implements Serializable {
     @Override
     public List<Node> getChildren() {
         if (IS_DEBUG_ENABLED)
-            log.debug("Getting children");
+            LOGGER.debug("Getting children");
         
         File[] children = file.listFiles();
         if (children == null || children.length == 0) {
             if (IS_DEBUG_ENABLED)
-                log.debug("Returning no children");
+                LOGGER.debug("Returning no children");
             return Collections.emptyList();
         }
         

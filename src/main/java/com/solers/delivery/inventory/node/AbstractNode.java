@@ -14,13 +14,19 @@
  ***********************************************************/
 package com.solers.delivery.inventory.node;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractNode implements Node {
-    protected static final int DEFAULT_ACCURACY = 1000;
-    protected static final Logger log = Logger.getLogger(AbstractNode.class);
+	
+    /**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		AbstractNode.class);
     
     private final long size;
+    protected static final int DEFAULT_ACCURACY = 1000;
     
     public AbstractNode() {
         size = 0;
@@ -83,16 +89,37 @@ public abstract class AbstractNode implements Node {
                     return true;
                 } else if (this.isDirectory() ^ n.isDirectory()) {
                     //attributes are implicitly not equal for file/directory comparisons
-                    if (log.isDebugEnabled()) log.debug(this.getPath() + " file/directory bits misaligned " + this.isDirectory() + ", " + n.isDirectory());
+                    if (LOGGER.isDebugEnabled()) {
+                    	LOGGER.debug(
+                    			this.getPath() 
+                    			+ " file/directory bits misaligned [ " 
+                    			+ this.isDirectory() 
+                    			+ "], [ " + n.isDirectory()
+                    			+ " ].");
+                    }
                     return false;
                 }
                 //both are files, so use attributes to check
                 return sizeEquals(n.getSize()) && timestampEquals(n.getTimestamp(), getTimestampAccuracy(n));
             }
-            if (log.isDebugEnabled()) log.debug(this.getPath() + " paths not equal " + n.getPath());
+            if (LOGGER.isDebugEnabled()) {
+            	LOGGER.debug(
+            			"[ "
+            			+ this.getPath() 
+            			+ " ] paths not equal [ " 
+            			+ n.getPath()
+            			+ " ].");
+            }
             return false;
         }
-        if (log.isDebugEnabled()) log.debug(this.getPath() + " other object not a node " + o.getClass());
+        if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug(
+        			" [ "
+        			+ this.getPath() 
+        			+ " ] other object not a node [ " 
+        			+ o.getClass()
+        			+ " ].");
+        }
         return false;
     }
     
@@ -116,16 +143,23 @@ public abstract class AbstractNode implements Node {
     
     protected boolean timestampEquals(long other, int accuracy) {
         boolean result = (this.getTimestamp() / accuracy) == (other / accuracy); 
-        if (!result && log.isDebugEnabled()) {
-            log.debug(this.getPath() + " timestamps not equal " + this.getTimestamp() + ", " + other + " (precision " + accuracy + ")");
+        if (!result && LOGGER.isDebugEnabled()) {
+        	LOGGER.debug(
+                "[ " 
+        	    + this.getPath() 
+        	    + " ] timestamps not equal [ " 
+        	    + this.getTimestamp() 
+        	    + " ], [ " 
+        	    + other 
+        	    + " ] (precision => [ " + accuracy + " ])");
         }
         return result;
     }
     
     protected boolean sizeEquals(long other) {
         boolean result = this.getSize() == other;
-        if (!result && log.isDebugEnabled()) {
-            log.debug(this.getPath() + " size not equal " + this.getSize() + ", " + other);
+        if (!result && LOGGER.isDebugEnabled()) {
+        	LOGGER.debug(this.getPath() + " size not equal " + this.getSize() + ", " + other);
         }
         return result;
     }

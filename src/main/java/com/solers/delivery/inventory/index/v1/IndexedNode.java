@@ -26,14 +26,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.node.AbstractNode;
 import com.solers.delivery.inventory.node.Node;
 
 class IndexedNode extends AbstractNode implements Serializable {
-    private static final long serialVersionUID = 1L;
-    protected static final Logger log = Logger.getLogger(IndexedNode.class);
+
+	/**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = 7572188688262428715L;
+
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		IndexedNode.class);
     
     protected InventoryReader inventoryReader;
     private IndexedNode parent;
@@ -132,7 +143,7 @@ class IndexedNode extends AbstractNode implements Serializable {
                 EntryStruct newNode = inventoryReader.readEntry(offset);
                 return new IndexedNode(inventoryReader, newNode, offset, IndexedNode.this);
             } catch (IOException ioe) {
-                log.error("Error retrieving child node index: " + index, ioe);
+            	LOGGER.error("Error retrieving child node index: " + index, ioe);
                 return null;
             }
         }

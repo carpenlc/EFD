@@ -23,8 +23,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.solers.util.NamedThreadFactory;
 import com.solers.util.db.action.DatabaseAction;
 
 /**
@@ -32,7 +34,11 @@ import com.solers.util.db.action.DatabaseAction;
  */
 public abstract class DatabaseBean implements Database {
     
-    protected static final Logger log = Logger.getLogger(DatabaseBean.class);
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		DatabaseBean.class);
     
     private File databaseDirectory;
     private List<DatabaseAction> actions;
@@ -52,9 +58,9 @@ public abstract class DatabaseBean implements Database {
     public final void start() {
         doStart();
         if (!initialized()) {
-            log.info("Database has not been initialized.  Running initialization...");
+            LOGGER.info("Database has not been initialized.  Running initialization...");
             initialize();
-            log.info("Database initialized");
+            LOGGER.info("Database initialized");
         }
         writeCurrentPort();
         
@@ -93,7 +99,7 @@ public abstract class DatabaseBean implements Database {
         try {
             getInitializationFile().createNewFile();
         } catch (IOException ex) {
-            log.error("Error creating init file: " + ex.getMessage(), ex);
+        	LOGGER.error("Error creating init file: " + ex.getMessage(), ex);
         }
     }
     
@@ -115,13 +121,13 @@ public abstract class DatabaseBean implements Database {
                 try {
                     statement.execute(sql);
                 } catch (SQLException ex) {
-                    log.error("Error processing statement: " + ex.getMessage(), ex);
+                	LOGGER.error("Error processing statement: " + ex.getMessage(), ex);
                 } finally {
                     close(statement);
                 }
             }
         } catch (SQLException ex) {
-            log.error("Error processing statements: " + ex.getMessage(), ex);
+        	LOGGER.error("Error processing statements: " + ex.getMessage(), ex);
         } finally {
             close(conn);
         }
@@ -132,7 +138,7 @@ public abstract class DatabaseBean implements Database {
             try {
                 closeable.close();
             } catch (IOException ignore) {
-                log.error("Error closing "+closeable+": " + ignore.getMessage(), ignore);
+            	LOGGER.error("Error closing "+closeable+": " + ignore.getMessage(), ignore);
             }
         }
     }
@@ -142,7 +148,7 @@ public abstract class DatabaseBean implements Database {
             try {
                 conn.close();
             } catch (SQLException ignore) {
-                log.error("Error closing connection: " + ignore.getMessage(), ignore);
+            	LOGGER.error("Error closing connection: " + ignore.getMessage(), ignore);
             }
         }
     }
@@ -152,7 +158,7 @@ public abstract class DatabaseBean implements Database {
             try {
                 stmt.close();
             } catch (SQLException ignore) {
-                log.error("Error closing statement: " + ignore.getMessage(), ignore);
+            	LOGGER.error("Error closing statement: " + ignore.getMessage(), ignore);
             }
         }
     }
@@ -167,7 +173,7 @@ public abstract class DatabaseBean implements Database {
             writer = new FileWriter(file);
             writer.write(String.valueOf(getPort()));
         } catch (IOException ex) {
-            log.error("Error writing current port", ex);
+        	LOGGER.error("Error writing current port", ex);
         } finally {
             close(writer);
         }
@@ -178,7 +184,7 @@ public abstract class DatabaseBean implements Database {
             try {
                 Thread.sleep(Long.MAX_VALUE);
             } catch (InterruptedException ex) {
-                DatabaseBean.log.info("Interrupted, shutting down");
+                DatabaseBean.LOGGER.info("Interrupted, shutting down");
                 DatabaseBean.this.stop();
                 Thread.currentThread().interrupt();
             }

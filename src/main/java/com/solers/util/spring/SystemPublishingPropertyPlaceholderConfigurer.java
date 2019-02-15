@@ -17,7 +17,9 @@ package com.solers.util.spring;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -27,20 +29,31 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
  * 
  * @author <a href="mailto:kevin.conaway@solers.com">Kevin Conaway</a>
  */
-public class SystemPublishingPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
+public class SystemPublishingPropertyPlaceholderConfigurer 
+		extends PropertyPlaceholderConfigurer {
 
-    private static final Logger log = Logger.getLogger(SystemPublishingPropertyPlaceholderConfigurer.class);
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		SystemPublishingPropertyPlaceholderConfigurer.class);
     
     @Override
-    protected void processProperties(ConfigurableListableBeanFactory factory, Properties properties) throws BeansException {
-        super.processProperties(factory, properties);
+    protected void processProperties(
+    		ConfigurableListableBeanFactory factory, 
+    		Properties properties) 
+    				throws BeansException {
+        
+    	super.processProperties(factory, properties);
         
         for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
             if (System.getProperty(key) == null) {
                 System.setProperty(key, properties.getProperty(key));
             } else {
-               log.info(key+" already defined in system properties, skipping");
+               LOGGER.info("[ " 
+            		   + key
+            		   + " ] already defined in system properties, skipping");
             }
         }
     }

@@ -29,8 +29,9 @@ import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.derby.drda.NetworkServerControl;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import com.solers.util.LoggingOutputStream;
 
@@ -40,7 +41,11 @@ import com.solers.util.LoggingOutputStream;
 public class DerbyBean extends DatabaseBean {
     
     private static final int MAX_THREADS = 25;
-    private static final Logger log = Logger.getLogger(DerbyBean.class);
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		DerbyBean.class);
     
     private final int port;
     private final NetworkServerControl control;
@@ -58,11 +63,19 @@ public class DerbyBean extends DatabaseBean {
      * @return LoggingOutputStream
      */
     public static OutputStream getLogStream() {
-        return new LoggingOutputStream(log, Level.INFO);
+        return new LoggingOutputStream(LOGGER, Level.INFO);
     }
     
-    public DerbyBean(File databaseDirectory, int port, String schemaName, String jdbcUrl, String encryptionKey, String userPassword, String adminPassword) throws Exception {
-        setDatabaseDirectory(databaseDirectory);
+    public DerbyBean(
+    		File databaseDirectory, 
+    		int port, 
+    		String schemaName, 
+    		String jdbcUrl, 
+    		String encryptionKey, 
+    		String userPassword, 
+    		String adminPassword) throws Exception {
+        
+    	setDatabaseDirectory(databaseDirectory);
         
         System.setProperty("derby.system.home", databaseDirectory.getAbsolutePath());
         System.setProperty("derby.connection.requireAuthentication", "true");
@@ -126,12 +139,12 @@ public class DerbyBean extends DatabaseBean {
         }
         
         try {
-            control.start(new PrintWriter(new LoggingOutputStream(log, Level.INFO)));
+            control.start(new PrintWriter(new LoggingOutputStream(LOGGER, Level.INFO)));
         } catch (Exception ex) {
-            log.error("Error starting DerbyDB", ex);
+            LOGGER.error("Error starting DerbyDB", ex);
         }
         
-        log.info("Derby listening on: "+port);
+        LOGGER.info("Derby listening on: "+port);
         started.set(true);
     }
 
@@ -151,11 +164,11 @@ public class DerbyBean extends DatabaseBean {
     @Override
     protected void doStop() {
         if (!started.compareAndSet(true, false)) {
-            log.info("Derby already shutdown");
+        	LOGGER.info("Derby already shutdown");
             return;
         }
 
-        log.info("Stopping derby");
+        LOGGER.info("Stopping derby");
         System.setProperty("derby.user.initialsa", adminPassword);
         properties.setProperty("shutdown", "true");
         properties.setProperty("user", "initialsa");
@@ -165,7 +178,7 @@ public class DerbyBean extends DatabaseBean {
             Connection conn = getConnection();
             close(conn);
         } catch (SQLException ex) {
-            log.info("DerbyDB shutdown  code: " + ex.getErrorCode() + "  sqlstate: " + ex.getSQLState());
+        	LOGGER.info("DerbyDB shutdown  code: " + ex.getErrorCode() + "  sqlstate: " + ex.getSQLState());
         } finally {
             System.clearProperty("derby.user.initialsa");
         }
@@ -177,7 +190,7 @@ public class DerbyBean extends DatabaseBean {
             Class.forName("org.apache.derby.jdbc.ClientDriver");
             return DriverManager.getConnection(jdbcUrl, properties);
         } catch (ClassNotFoundException ex) {
-            log.error("Error finding database driver: " + ex.getMessage(), ex);
+        	LOGGER.error("Error finding database driver: " + ex.getMessage(), ex);
             throw new SQLException("Driver not found: ", ex);
         }
     }
@@ -222,7 +235,7 @@ public class DerbyBean extends DatabaseBean {
             }
             
         } catch (SQLException ex) {
-            log.error("Error updating permissions", ex);
+        	LOGGER.error("Error updating permissions", ex);
         } finally {
             close(stmt);
             close(conn);
@@ -232,7 +245,7 @@ public class DerbyBean extends DatabaseBean {
         try {
             control.setMaxThreads(MAX_THREADS);
         } catch (Exception ex) {
-            log.error("Error setting max threads", ex);
+        	LOGGER.error("Error setting max threads", ex);
         }
     }
 }

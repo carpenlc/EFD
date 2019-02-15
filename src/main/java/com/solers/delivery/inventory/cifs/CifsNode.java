@@ -25,13 +25,19 @@ import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.node.AbstractNode;
 import com.solers.delivery.inventory.node.Node;
 
 public class CifsNode extends AbstractNode {
-    private static final Logger log = Logger.getLogger(CifsNode.class);
+	
+    /**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		CifsNode.class);
     
     private final CifsNode root;
     private final SmbFile backing;
@@ -58,7 +64,7 @@ public class CifsNode extends AbstractNode {
             }
             return l;
         } catch (SmbException se) {
-            log.warn("Failed to list children on CIFS.", se);
+        	LOGGER.warn("Failed to list children on CIFS.", se);
             return Collections.emptyList();
         }
     }
@@ -87,7 +93,7 @@ public class CifsNode extends AbstractNode {
                 return new CifsNode(root, sf);
             }
         } catch (Exception e) {
-            log.warn("Exception while seeking CIFS child node.", e);
+        	LOGGER.warn("Exception while seeking CIFS child node.", e);
         }
         return null;
     }
@@ -100,7 +106,7 @@ public class CifsNode extends AbstractNode {
         try {
             return new CifsNode(root, new SmbFile(root.backing, parent));
         } catch (Exception e) {
-            log.warn("Exception occurred when seeking CIFS parent.", e);
+        	LOGGER.warn("Exception occurred when seeking CIFS parent.", e);
         }
         return null;
     }
@@ -119,7 +125,7 @@ public class CifsNode extends AbstractNode {
         try {
             return backing.length();
         } catch (SmbException se) {
-            log.warn("Error while trying to get size attribute.", se);
+        	LOGGER.warn("Error while trying to get size attribute.", se);
             return 0l;
         }
     }
@@ -129,7 +135,7 @@ public class CifsNode extends AbstractNode {
         try {
             return backing.lastModified();
         } catch (SmbException se) {
-            log.warn("Failed to retrieve timestamp data.", se);
+        	LOGGER.warn("Failed to retrieve timestamp data.", se);
             return 0l;
         }
     }
@@ -139,7 +145,7 @@ public class CifsNode extends AbstractNode {
         try {
             return backing.isDirectory();
         } catch (SmbException se) {
-            log.warn("Failed to retrieve file attribute.", se);
+        	LOGGER.warn("Failed to retrieve file attribute.", se);
             return backing.getPath().endsWith("/");
         }
     }

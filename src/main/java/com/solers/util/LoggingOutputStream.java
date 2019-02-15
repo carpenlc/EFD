@@ -30,8 +30,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 /**
  * An OutputStream that flushes out to a Logger.
@@ -161,9 +162,11 @@ public class LoggingOutputStream extends OutputStream {
     }
 
     /**
-     * Flushes this output stream and forces any buffered output bytes to be written out. The general contract of <code>flush</code> is that calling it is an
-     * indication that, if any bytes previously written have been buffered by the implementation of the output stream, such bytes should immediately be written
-     * to their intended destination.
+     * Flushes this output stream and forces any buffered output bytes to be 
+     * written out. The general contract of <code>flush</code> is that calling 
+     * it is an indication that, if any bytes previously written have been 
+     * buffered by the implementation of the output stream, such bytes should 
+     * immediately be written to their intended destination.
      */
     public void flush() {
         if (count == 0) {
@@ -183,7 +186,8 @@ public class LoggingOutputStream extends OutputStream {
             }
         }
 
-        logger.log(level, new String(buf, 0, count).trim());
+        // TODO: There doesn't appear to be a logback equivalent
+        // logger.log(level, new String(buf, 0, count).trim());
 
         reset();
     }

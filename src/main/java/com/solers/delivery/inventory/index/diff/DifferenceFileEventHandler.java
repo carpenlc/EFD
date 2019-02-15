@@ -22,7 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.comparer.NodeListener;
 import com.solers.delivery.inventory.index.HashUtil;
@@ -39,10 +40,15 @@ import com.solers.util.HashFunction;
  * the presence or absence of differences in the file system.
  */
 public final class DifferenceFileEventHandler implements NodeListener {
-    public static final long TIME_OF_COMPLETION = 0;
+    
+	public static final long TIME_OF_COMPLETION = 0;
     public static final HashFunction DEFAULT_HASH = HashFunction.FNV;
     
-    private static final Logger log = Logger.getLogger(DifferenceFileEventHandler.class);
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		DifferenceFileEventHandler.class);
     
     private static final byte VERSION = 1;
     private static final byte PLACEHOLDER = -1;
@@ -120,7 +126,7 @@ public final class DifferenceFileEventHandler implements NodeListener {
             entry.pack(out);
             differenceCount++;
         } catch (IOException ioe) {
-            log.debug("Failed to add difference", ioe);
+            LOGGER.debug("Failed to add difference", ioe);
         }
     }
     
@@ -135,7 +141,7 @@ public final class DifferenceFileEventHandler implements NodeListener {
                 childEntry.pack(out);
                 differenceCount++;
             } catch (IOException ioe) {
-                log.debug("Failed to add children", ioe);
+            	LOGGER.debug("Failed to add children", ioe);
             }
         }
     }
@@ -151,7 +157,7 @@ public final class DifferenceFileEventHandler implements NodeListener {
             entry.pack(out);
             differenceCount++;
         } catch (IOException ioe) {
-            log.debug("Failed to add removed node", ioe);
+        	LOGGER.debug("Failed to add removed node", ioe);
         }
     }
     
@@ -190,7 +196,7 @@ public final class DifferenceFileEventHandler implements NodeListener {
             out.seek(0);
             header.pack(out);
         } catch (IOException ioe) {
-            log.debug("Failed to write header.", ioe);
+        	LOGGER.debug("Failed to write header.", ioe);
         }
     }
 
@@ -247,12 +253,12 @@ public final class DifferenceFileEventHandler implements NodeListener {
             header = HeaderStruct.create(VERSION, timestamp == 0 ? System.currentTimeMillis() : timestamp, hash.name(), tableOffset);
             header.pack(out);
         } catch (IOException ioe) {
-            log.error("Could not write difference file.", ioe);
+        	LOGGER.error("Could not write difference file.", ioe);
         } finally {        
             try {
                 if (out != null) out.close();
             } catch (IOException ioe) {
-                log.debug("Failed to close diff file output.", ioe);
+            	LOGGER.debug("Failed to close diff file output.", ioe);
             }
         }
     }

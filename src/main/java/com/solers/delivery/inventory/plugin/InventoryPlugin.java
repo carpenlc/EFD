@@ -35,7 +35,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.jar.JarFile;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.Inventory;
 import com.solers.delivery.inventory.plugin.provider.InventoryProvider;
@@ -58,7 +59,7 @@ import com.solers.delivery.inventory.plugin.provider.ProviderInfo;
  * <li>The Java class specified in the provider implements com.solers.delivery.inventory.plugin.provider.InventoryProvider</li>
  * <li>All dependencies of the InventoryProvider and its dependent classes are satisfied within the plugin .jar archive.</li>
  * </ul>
- * <p>Satisfying the above requirements will indirectly require implentations of:</p>
+ * <p>Satisfying the above requirements will indirectly require implementations of:</p>
  * <ul>
  * <li>com.solers.delivery.inventory.Inventory</li>
  * <li>com.solers.delivery.inventory.node.Node</li>
@@ -69,7 +70,13 @@ import com.solers.delivery.inventory.plugin.provider.ProviderInfo;
  * @author gvanore
  */
 public final class InventoryPlugin {
-    private static final Logger log = Logger.getLogger(InventoryPlugin.class);
+	
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		InventoryPlugin.class);
+    
     private static final String PLUGIN_DESCRIPTOR_RESOURCE = "META-INF/provider";
     protected static final ConcurrentMap<String, InventoryProvider> registeredPlugins = 
         new ConcurrentHashMap<String, InventoryProvider>(); 
@@ -198,7 +205,7 @@ public final class InventoryPlugin {
             try {
                 if (p.accept(inventoryResource)) return p;
             } catch (Exception e) {
-                log.debug(p.getClass() + " threw an exception during accept method.", e);
+                LOGGER.debug(p.getClass() + " threw an exception during accept method.", e);
             }
         }
         throw new PluginProviderNotFoundException("No provider could be found for " + (inventoryResource != null ? inventoryResource.toASCIIString() : "(null)"));

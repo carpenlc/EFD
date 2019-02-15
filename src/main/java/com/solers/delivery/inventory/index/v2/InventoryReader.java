@@ -26,7 +26,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.HashProperties;
 import com.solers.delivery.inventory.Inventory;
@@ -42,14 +43,23 @@ import com.solers.util.HashFunction;
  * and turns its contents into a Java-compatible object graph.
  */
 public final class InventoryReader implements Inventory, Serializable {
-    private static final long serialVersionUID = 1L;
     
-    private static final String[] PROP_ARRAY = new String[] {
+    /**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = 5689804458112805804L;
+	
+	private static final String[] PROP_ARRAY = new String[] {
         HashProperties.ALGORITHM,
         TimeProperties.TIMESTAMP };
     private static final Set<String> properties = new HashSet<String>(Arrays.asList(PROP_ARRAY));
     
-    private static final Logger log = Logger.getLogger(InventoryReader.class);
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		IndexedNode.class);
+    
     private static final byte version = 2;
     private transient RandomAccessFile in;
     private transient EntryStruct root;
@@ -102,8 +112,9 @@ public final class InventoryReader implements Inventory, Serializable {
         HeaderExtension extension = HeaderExtension.create(in);
         hash = HashFunction.valueOf(extension.hashAlgorithm);
         lkg = extension.lkg_timestamp;
-        if (log.isDebugEnabled())
-            log.debug("Read inventory specifying hash algorithm " + hash.name());
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Read inventory specifying hash algorithm " + hash.name());
+        }
         return header.rootOffset;
     }
     
@@ -164,14 +175,13 @@ public final class InventoryReader implements Inventory, Serializable {
     
     @Override
     public void close() {
-        if (in == null) {
-            return;
-        }
-        
-        try {
-            in.close();
-        } catch (IOException ignore) {
-            log.error("Error closing input during shutdown", ignore);
+        if (in != null) {
+	        try {
+	            in.close();
+	        } 
+	        catch (IOException ignore) {
+	            LOGGER.error("Error closing input during shutdown", ignore);
+	        }
         }
     }
     

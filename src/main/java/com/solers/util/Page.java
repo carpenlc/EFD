@@ -22,12 +22,14 @@ import java.util.List;
  */
 public class Page<T> implements Iterable<T> {
     
-    private int count;
-    private List<T> page;
+    private int     count = 0;
+    private List<T> page  = null;
     
-    public Page(int count, List<T> page) {
-        this.count = count;
-        this.page = page;
+    public Page(List<T> page) {
+    	if (page != null) {
+    		setCount(page.size());
+    		setPage(page);
+    	}
     }
     
     public Page() {

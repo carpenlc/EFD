@@ -20,7 +20,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.inventory.index.HashUtil;
 import com.solers.delivery.inventory.node.AbstractNode;
@@ -33,7 +34,12 @@ import com.solers.delivery.inventory.node.Node;
  * an actual difference.
  */
 public final class DiffParentNode extends AbstractNode {
-    private static final Logger log = Logger.getLogger(DiffParentNode.class);
+	
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		DiffParentNode.class);
     
     private final String path;
     private final int[] children;
@@ -54,7 +60,7 @@ public final class DiffParentNode extends AbstractNode {
             try { 
                 list.add(diffReader.readDifference(children[i], this));
             } catch (IOException ioe) {
-                log.debug("IO exception reading difference file: ", ioe);
+            	LOGGER.debug("IO exception reading difference file: ", ioe);
             }
         }
         
@@ -80,7 +86,7 @@ public final class DiffParentNode extends AbstractNode {
             }
             return difference;
         } catch (IOException ioe) {
-            log.debug("IO exception reading difference file: ", ioe);
+        	LOGGER.debug("IO exception reading difference file: ", ioe);
             return null;
         }
     }

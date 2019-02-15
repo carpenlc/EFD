@@ -29,10 +29,13 @@ import com.solers.util.Filter;
  * children in FilteredNode adapters.
  */
 public class FilteredNode extends AbstractNode implements Serializable {
-
-    private static final long serialVersionUID = 1l;
-
-    private final Node node;
+	
+    /**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = -2475279436879682708L;
+	
+	private final Node node;
     protected final Filter<Node> filter;
 
     /**
@@ -66,9 +69,13 @@ public class FilteredNode extends AbstractNode implements Serializable {
          * nodes.
          */
         return new ArrayList<Node>() {
-            private static final long serialVersionUID = 1L;
             
             /**
+			 * Eclipse-generated serialVersionUID
+			 */
+			private static final long serialVersionUID = -6978970876530803691L;
+
+			/**
              * The get/size/etc methods of this list use the unfiltered
              * list as a backing - therefore we must apply the filter
              * now.
