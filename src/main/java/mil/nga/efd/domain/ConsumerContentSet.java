@@ -22,12 +22,13 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.validator.Min;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.Pattern;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Min;
+
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.solers.delivery.daos.ConsumerContentSetDAO;
+import mil.nga.efd.controllers.ConsumerContentSetDAO;
 import com.solers.delivery.domain.validations.Writable;
 import com.solers.util.unit.FileSizeUnit;
 import com.solers.util.unit.TimeIntervalUnit;
@@ -60,11 +61,11 @@ import com.solers.util.unit.TimeIntervalUnit;
 public class ConsumerContentSet extends ContentSet {
 
     /**
-     * Serial UID
-     */
-    private static final long serialVersionUID = 1l;
-
-    private String supplierName;
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = -6157042150360635294L;
+	
+	private String supplierName;
     private String supplierAddress;
     private int supplierPort;
     private int fileDeleteDelay;
@@ -89,7 +90,7 @@ public class ConsumerContentSet extends ContentSet {
      */
     @Column(name = "supplier_name", nullable = false)
     @NotEmpty(message="{contentset.supplier.name}")
-    @Pattern(regex = "^[a-zA-Z0-9\\s_.-]+$", 
+    @Pattern(regexp = "^[a-zA-Z0-9\\s_.-]+$", 
             message="{contentset.supplier.name.invalid}")
     public String getSupplierName() {
         return supplierName;
@@ -113,7 +114,7 @@ public class ConsumerContentSet extends ContentSet {
      */
     @Column(name = "supplier_address", nullable = false)
     @NotEmpty(message="{contentset.supplier.address}")
-    @Pattern(regex = "^[a-zA-Z0-9\\s_.-]+$", 
+    @Pattern(regexp = "^[a-zA-Z0-9\\s_.-]+$", 
             message="{contentset.supplier.address.invalid}")
     public String getSupplierAddress() {
         return supplierAddress;
@@ -203,7 +204,7 @@ public class ConsumerContentSet extends ContentSet {
      * supplier manifest.
      */
     @Column(name = "virtual_manifest", nullable = true)
-    @Pattern(regex = "^[a-zA-Z0-9\\s?!_.-]{0,255}+$", 
+    @Pattern(regexp = "^[a-zA-Z0-9\\s?!_.-]{0,255}+$", 
             message="{contentset.virtualmanifest.invalid}")
     public String getVirtualManifest() {
         return virtualManifest;

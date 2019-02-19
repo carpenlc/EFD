@@ -25,8 +25,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.Pattern;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
@@ -80,7 +80,7 @@ public class User {
 
     @Column(nullable = false, unique = true)
     @NotEmpty(message="{user.username.required}")
-    @Pattern(regex = "[\\w-]*", message="{user.username.invalid}")
+    @Pattern(regexp = "[\\w-]*", message="{user.username.invalid}")
     public String getUsername() {
         return username;
     }
@@ -145,7 +145,7 @@ public class User {
 
     @Column(nullable = false)
     @NotEmpty(message="{user.first.required}")
-    @Pattern(regex = "^[a-zA-Z\\s'.-]+$", message="{user.name.invalid}")
+    @Pattern(regexp = "^[a-zA-Z\\s'.-]+$", message="{user.name.invalid}")
     public String getFirstName() {
         return firstName;
     }
@@ -156,7 +156,7 @@ public class User {
 
     @Column(nullable = false)
     @NotEmpty(message="{user.last.required}")
-    @Pattern(regex = "^[a-zA-Z\\s'.-]+$", message="{user.name.invalid}")
+    @Pattern(regexp = "^[a-zA-Z\\s'.-]+$", message="{user.name.invalid}")
     public String getLastName() {
         return lastName;
     }

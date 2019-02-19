@@ -25,18 +25,21 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Index;
+import javax.persistence.Index;
 
 import com.solers.delivery.content.consumer.difference.ContentDifference;
-import com.solers.delivery.daos.PendingDeleteDAO;
+import mil.nga.efd.controllers.PendingDeleteDAO;
 
 /**
  * @author JGimourginas
  */
 
 @Entity
-@Table(name = "pending_delete")
+@Table(name = "pending_delete",
+       indexes = { 
+    		   @Index(columnList="path", name="pathIndex"),
+    		   @Index(columnList="getConsumerContentSetId", name="consumerIdIndex")
+       })
 @NamedQueries({
     @NamedQuery(name = PendingDeleteDAO.GET_BY_PATH, 
                 query = "SELECT p from PendingDelete p WHERE p.consumerContentSetId = :consumerId AND p.path LIKE :path"),
@@ -74,7 +77,6 @@ public class PendingDelete implements Serializable {
     }
 
     @Column(length = PATH_LENGTH)
-    @Index(name = "pathIndex")
     public String getPath() {
         return path;
     }
@@ -93,7 +95,6 @@ public class PendingDelete implements Serializable {
     }
 
     @Column
-    @Index(name = "consumerIdIndex")
     public Long getConsumerContentSetId() {
         return consumerContentSetId;
     }

@@ -33,12 +33,14 @@ import mil.nga.efd.domain.Alert.AlertType;
 import com.solers.util.Page;
 
 /**
+ * Completely re-wrote to remove dependencies on outdated Hibernate.
+ * 
  * TODO: LCC - This class has some squirrelly logic allowing callers to 
  * restrict the results based on rownum.  Revisit later to see if we 
  * actually need this logic for anything.  The code is left in but 
  * commented out.
  * 
- * @author <a href="mailto:kevin.conaway@solers.com">Kevin Conaway</a>
+ * @author L. Craig Carpenter
  */
 public class AlertDAOHibernate implements AlertDAO {
 	
@@ -54,6 +56,14 @@ public class AlertDAOHibernate implements AlertDAO {
 	@Autowired
 	private EntityManager em;
 	
+	/**
+	 * Default no-arg constructor.
+	 */
+	public AlertDAOHibernate() {}
+	
+	/**
+	 * List alerts by the alert type.
+	 */
     @Override
     @SuppressWarnings("unchecked")
     public Page<Alert> listBy(AlertType type, int startIndex, int max) {
@@ -128,6 +138,11 @@ public class AlertDAOHibernate implements AlertDAO {
         */
     }
 
+    /**
+     * Remove a list of IDs from the target data source.
+     * 
+     * @param ids A Collection of IDs to remove from the data source.
+     */
     @Override
     public void makeTransientById(Collection<Long> ids) {
     	
@@ -135,7 +150,8 @@ public class AlertDAOHibernate implements AlertDAO {
     	
     	if (em != null) {
     		if ((ids != null) && (ids.size() > 0)) {
-		    	CriteriaBuilder cb  = em.getCriteriaBuilder();
+		    	
+    			CriteriaBuilder cb  = em.getCriteriaBuilder();
 		    	CriteriaDelete<Alert> cd = cb.createCriteriaDelete(Alert.class);
 		    	Root<Alert> root = cd.from(Alert.class);
 		    	cd.where(root.get("id").in(ids));

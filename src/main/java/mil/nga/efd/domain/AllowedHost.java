@@ -23,11 +23,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
-import org.hibernate.validator.Pattern;
+import mil.nga.efd.controllers.AllowedHostDAO;
 
-import com.solers.delivery.daos.AllowedHostDAO;
-import com.solers.delivery.domain.validations.NotBlank;
+//import com.solers.delivery.domain.validations.NotBlank;
 
 /**
  * @author <a href="mailto:kevin.conaway@solers.com">Kevin Conaway</a>
@@ -65,7 +66,7 @@ public class AllowedHost implements Serializable {
     
     @Column
     @NotBlank(message="{allowedhost.alias.required}")
-    @Pattern(regex = "^[a-zA-Z0-9\\s_.-]+$", 
+    @Pattern(regexp = "^[a-zA-Z0-9\\s_.-]+$", 
             message="{allowedhost.alias.invalid}")
     public String getAlias() {
         return alias;
@@ -77,7 +78,7 @@ public class AllowedHost implements Serializable {
     
     @Column(nullable=false, updatable=true)
     @NotBlank(message="{allowedhost.commonname.required}")
-    @Pattern(regex = "^[a-zA-Z0-9\\s_.-]+$", 
+    @Pattern(regexp = "^[a-zA-Z0-9\\s_.-]+$", 
             message="{allowedhost.commonname.invalid}")
     public String getCommonName() {
         return commonName;
