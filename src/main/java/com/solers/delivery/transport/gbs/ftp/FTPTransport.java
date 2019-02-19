@@ -28,16 +28,24 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.ftp.FTPSClient;
-import org.apache.log4j.Logger;
 
-import com.solers.delivery.domain.FtpConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import mil.nga.efd.domain.FtpConnection;
 import com.solers.delivery.transport.gbs.GbsException;
 import com.solers.delivery.transport.gbs.Transport;
 import com.solers.delivery.transport.gbs.TransportException;
 import com.solers.delivery.transport.gbs.TransportType;
+import com.solers.delivery.transport.gbs.push.GbsTransferTask;
 
 public class FTPTransport implements Transport {
-    private static final Logger log = Logger.getLogger(FTPTransport.class);
+	
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		FTPTransport.class);
 
     private FTPClient ftpclient = null;
     private FtpConnection connection;

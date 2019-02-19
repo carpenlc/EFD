@@ -18,9 +18,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.solers.delivery.domain.FtpConnection;
+import mil.nga.efd.domain.FtpConnection;
 import com.solers.delivery.transport.gbs.Archive;
 import com.solers.delivery.transport.gbs.GbsException;
 import com.solers.delivery.transport.gbs.GbsFile;
@@ -31,14 +32,19 @@ import com.solers.delivery.transport.gbs.ftp.FTPTransport;
 import com.solers.delivery.transport.gbs.TransportType;
 
 /**
- * This abstract class will Archive the appropriate files and transport them to the appropriate SBM via FTPS or FTP
+ * This abstract class will Archive the appropriate files and transport them 
+ * to the appropriate SBM via FTPS or FTP.
  * 
  * @author dthemistokleous
  * 
  */
 public class GbsTransferTask implements Runnable {
-    /* Logger */
-    private static final Logger log = Logger.getLogger(GbsTransferTask.class);
+	
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		GbsTransferTask.class);
 
     protected static final int TIMEOUT = 5000; // 5 seconds
 
@@ -61,20 +67,20 @@ public class GbsTransferTask implements Runnable {
 }
 
     public void run() {
-        log.info("Starting to upload archive for sync: "+syncKey);
+    	LOGGER.info("Starting to upload archive for sync: "+syncKey);
         Archive archive = null;
         try {
             archive = new TarArchive(archiveDirectory, System.currentTimeMillis()+"-"+syncKey);
             archive.addFilesToArchive(files, consumerContentSetName, syncKey);
             upload(archive);
-            log.info("Successfully uploaded archive for sync: "+syncKey);
+            LOGGER.info("Successfully uploaded archive for sync: "+syncKey);
         } catch (IOException e) {
-            log.error("Failed to create archive for sync: "+syncKey, e);
+        	LOGGER.error("Failed to create archive for sync: "+syncKey, e);
         } catch (GbsException e) {
-            log.error("Failed to transfer archive for sync: "+syncKey, e);
+        	LOGGER.error("Failed to transfer archive for sync: "+syncKey, e);
         } finally {
             if (archive != null && !archive.getArchive().delete()) {
-                log.warn("Failed to delete Archive file: " + archive.getArchive().getName());
+            	LOGGER.warn("Failed to delete Archive file: " + archive.getArchive().getName());
             }
         }        
     }

@@ -24,7 +24,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.validator.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import com.solers.delivery.domain.validations.ValidFilter;
 

@@ -14,6 +14,7 @@
  ***********************************************************/
 package mil.nga.efd.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -30,9 +31,14 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name="alerts")
-public class Alert {
+public class Alert implements Serializable {
     
-    public static enum AlertType {
+    /**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = -1854719339436575441L;
+
+	public static enum AlertType {
         ADMIN, USER, ALL
     }
     

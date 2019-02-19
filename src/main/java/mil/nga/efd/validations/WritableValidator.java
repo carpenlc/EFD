@@ -12,18 +12,30 @@
  *
  * (c) 2009 Solers, Inc.
  ***********************************************************/
-package com.solers.delivery.util.password;
+package com.solers.delivery.domain.validations.validators;
 
-import org.springframework.security.
+import java.io.File;
 
-/**
- * @author <a href="mailto:kconaway@solers.com">Kevin Conaway</a>
- */
-public class InvalidPasswordException extends SpringSecurityException {
-    
+import org.hibernate.validator.Validator;
 
-    public InvalidPasswordException(String message) {
-        super(message);
+import com.solers.delivery.domain.validations.Writable;
+
+public class WritableValidator implements Validator<Writable> {
+    @Override
+    public void initialize(Writable arg) {
+        
     }
 
+    @Override
+    public boolean isValid(Object arg) {
+        if (arg == null) return false;
+        String path = (String) arg;
+        
+        File file = new File(path);
+        if (!file.exists()) {
+            return file.mkdirs();
+        } else {
+            return file.canWrite();
+        }
+    }
 }

@@ -23,8 +23,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.hibernate.validator.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import com.solers.security.EncryptionUtils;
 
@@ -33,11 +32,11 @@ import com.solers.security.EncryptionUtils;
 public class FtpConnection implements Serializable {
 
     /**
-     * Serial UID
-     */
-    private static final long serialVersionUID = 1l;
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = -7383077412135677645L;
 
-    private Long id;
+	private Long id;
 
     private String username;
 

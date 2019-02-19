@@ -29,7 +29,8 @@ import javax.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Configurable;
 
 import mil.nga.efd.controllers.ConsumerContentSetDAO;
-import com.solers.delivery.domain.validations.Writable;
+import mil.nga.efd.validations.Writable;
+
 import com.solers.util.unit.FileSizeUnit;
 import com.solers.util.unit.TimeIntervalUnit;
 

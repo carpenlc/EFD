@@ -12,18 +12,22 @@
  *
  * (c) 2009 Solers, Inc.
  ***********************************************************/
-package com.solers.delivery.util.password;
+package mil.nga.efd.validations;
 
-import org.springframework.security.
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * @author <a href="mailto:kconaway@solers.com">Kevin Conaway</a>
- */
-public class InvalidPasswordException extends SpringSecurityException {
-    
+import org.hibernate.validator.ValidatorClass;
 
-    public InvalidPasswordException(String message) {
-        super(message);
-    }
+import com.solers.delivery.domain.validations.validators.WritableValidator;
 
+@ValidatorClass(WritableValidator.class)
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Writable {
+    String message() default "{pathNotWritable}";
 }

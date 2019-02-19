@@ -24,10 +24,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.solers.delivery.domain.ContentSet;
-import com.solers.delivery.domain.FtpConnection;
+import mil.nga.efd.controllers.AlertDAOHibernate;
+import mil.nga.efd.domain.ContentSet;
+import mil.nga.efd.domain.FtpConnection;
 import com.solers.delivery.transport.gbs.AbstractGBSService;
 import com.solers.delivery.transport.gbs.GbsFile;
 import com.solers.delivery.transport.gbs.GBSConfigurator;
@@ -41,8 +43,13 @@ import com.solers.util.NamedThreadFactory;
  * @author dthemistokleous
  */
 public class GbsPusher extends AbstractGBSService {
-    /* Logger */
-    private static final Logger log = Logger.getLogger(GbsPusher.class.getName());
+	
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		GbsPusher.class);
+    
     private static final int SIZE = 1024 * 1024;
     private static final int TIME = 1000 * 60;
 
@@ -102,7 +109,7 @@ public class GbsPusher extends AbstractGBSService {
             if (maximumAllowableQueueTime > 0) {
                 // schedule a time to call run() only if maximum queue time is > 0
                 scheduler.scheduleWithFixedDelay(this, 0, maximumAllowableQueueTime, TimeUnit.MILLISECONDS);
-                log.debug("Successfully Scheduled the GbsSupplierTask");
+                LOGGER.debug("Successfully Scheduled the GbsSupplierTask");
             }
         }
     }
@@ -111,17 +118,17 @@ public class GbsPusher extends AbstractGBSService {
      * Timer task to remove all files from the queue and send them to the SBM
      */
     public synchronized void run() {
-        log.debug("Running Timer GbsSupplier Task - removing all files from queue and transporting");
+    	LOGGER.debug("Running Timer GbsSupplier Task - removing all files from queue and transporting");
 
         for (String supplierName : contentSetFileMap.keySet()) {
             Map<String, List<GbsFile>> queues = contentSetFileMap.get(supplierName);
             for (String key : queues.keySet()) {
-                log.debug("Adding archive with supName" + supplierName + " to Transport: " + key);
+            	LOGGER.debug("Adding archive with supName" + supplierName + " to Transport: " + key);
                 transport(supplierName, key);
             }
         }
 
-        log.debug("Successfully Removed all files from Queue");
+        LOGGER.debug("Successfully Removed all files from Queue");
     }
 
     /**
@@ -148,7 +155,7 @@ public class GbsPusher extends AbstractGBSService {
                 transport(supplierContentSet, key);
             }
         } else {
-            log.warn("File Queue List for Key: " + key + " is NULL");
+        	LOGGER.warn("File Queue List for Key: " + key + " is NULL");
         }
     }
 
@@ -180,7 +187,7 @@ public class GbsPusher extends AbstractGBSService {
         if (!files.contains(file)) {
             files.add(file);
         } else {
-            log.info("File " + file.getFile().getName() + " already exists in the file list, will not be added again");
+        	LOGGER.info("File " + file.getFile().getName() + " already exists in the file list, will not be added again");
         }
     }
 
@@ -207,9 +214,9 @@ public class GbsPusher extends AbstractGBSService {
             task = new GbsTransferTask(type, getConsumerName(key), getSyncKey(key),
                                        files, connection, archiveDirectory);
             executorService.submit(task);
-            log.debug("Successfully added files to ZipQueue for ContentSetId = " + key);
+            LOGGER.debug("Successfully added files to ZipQueue for ContentSetId = " + key);
         }
-        log.debug("No files in Queue for Supplier: " + supplierName);
+        LOGGER.debug("No files in Queue for Supplier: " + supplierName);
     }
 
     /**
