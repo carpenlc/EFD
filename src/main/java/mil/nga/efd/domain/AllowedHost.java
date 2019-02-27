@@ -39,9 +39,12 @@ import mil.nga.efd.controllers.AllowedHostDAO;
         query = "SELECT a FROM AllowedHost a WHERE a.alias = :alias")
 public class AllowedHost implements Serializable {
     
-    private static final long serialVersionUID = 1l;
-    
-    private Long id;
+    /**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = -1810446287782648885L;
+	
+	private Long id;
     private String alias;
     private String commonName;
     

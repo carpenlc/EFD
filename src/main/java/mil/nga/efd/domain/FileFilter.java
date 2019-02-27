@@ -26,7 +26,7 @@ import javax.persistence.Transient;
 
 import javax.validation.constraints.NotEmpty;
 
-import com.solers.delivery.domain.validations.ValidFilter;
+import mil.nga.efd.validations.ValidFilter;
 
 /**
  * User: DMartin Date: Feb 26, 2007 Time: 5:21:40 PM A POJO class that is
@@ -45,12 +45,13 @@ import com.solers.delivery.domain.validations.ValidFilter;
 @Table(name = "file_filter")
 @ValidFilter(message="{contentset.filter.invalid}")
 public class FileFilter implements Serializable {
+
     /**
-     * Serial UID
-     */
-    private static final long serialVersionUID = 1l;
-    
-    private static final int PATTERN_COLUMN_SIZE = 255;
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = 4070519099840013507L;
+
+	private static final int PATTERN_COLUMN_SIZE = 255;
 
     private Long id;
     private String pattern;

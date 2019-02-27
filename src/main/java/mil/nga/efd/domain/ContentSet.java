@@ -41,21 +41,23 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.validator.Length;
-import org.hibernate.validator.Min;
-import org.hibernate.validator.NotEmpty;
-import org.hibernate.validator.Pattern;
-import org.hibernate.validator.Valid;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Configurable;
 
-import com.solers.delivery.daos.ContentSetDAO;
-import com.solers.delivery.domain.validations.ExistingDirectory;
-import com.solers.delivery.domain.validations.GbsIsEnabled;
-import com.solers.delivery.domain.validations.Readable;
-import com.solers.delivery.domain.validations.RestrictedPath;
-import com.solers.delivery.domain.validations.ValidFileName;
-import com.solers.delivery.domain.validations.ValidFtpConnection;
+import mil.nga.efd.controllers.ContentSetDAO;
+
+import mil.nga.efd.validations.ExistingDirectory;
+import mil.nga.efd.validations.GbsIsEnabled;
+import mil.nga.efd.validations.Readable;
+import mil.nga.efd.validations.RestrictedPath;
+import mil.nga.efd.validations.ValidFileName;
+import mil.nga.efd.validations.ValidFtpConnection;
 import com.solers.delivery.util.FileSystemUtil;
 import com.solers.util.unit.TimeIntervalUnit;
 
@@ -85,17 +87,22 @@ import com.solers.util.unit.TimeIntervalUnit;
 @Table(name = "content_set")
 @Inheritance(strategy = InheritanceType.JOINED)
 @NamedQueries({ 
-    @NamedQuery(name = ContentSetDAO.GET_SUPPLIER_BY_NAME, query = "SELECT c FROM ContentSet c WHERE c.name = :name"),
-    @NamedQuery(name = ContentSetDAO.GET_SUPPLIER_SETS, query = "SELECT c FROM ContentSet c WHERE c.supplier = 1")
+    @NamedQuery(
+    		name = ContentSetDAO.GET_SUPPLIER_BY_NAME, 
+    		query = "SELECT c FROM ContentSet c WHERE c.name = :name"),
+    @NamedQuery(
+    		name = ContentSetDAO.GET_SUPPLIER_SETS, 
+    		query = "SELECT c FROM ContentSet c WHERE c.supplier = 1")
     })
 @ValidFtpConnection
 public class ContentSet implements Serializable {
-    /**
-     * Serial UID
-     */
-    private static final long serialVersionUID = 1l;
     
-    private static final int NAME_LENGTH = 80;
+    /**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = 5538141587676485440L;
+	
+	private static final int NAME_LENGTH = 80;
     private static final int PATH_LENGTH = 255;
 
     private Long id;
@@ -207,8 +214,8 @@ public class ContentSet implements Serializable {
      */
     @Column(nullable = false, length = NAME_LENGTH, unique=true)
     @NotEmpty(message="{contentset.name}")
-    @Pattern(regex = "[\\w-]*", message="{contentset.name.invalid}")
-    @Length(max=NAME_LENGTH, message="{contentset.name.too.long}")
+    @Pattern(regexp = "[\\w-]*", message="{contentset.name.invalid}")
+    @Size(max=NAME_LENGTH, message="{contentset.name.too.long}")
     public String getName() {
         return name;
     }
@@ -333,7 +340,7 @@ public class ContentSet implements Serializable {
      * @return description property
      */
     @Column(name = "description", nullable = true)
-    @Pattern(regex = "^[a-zA-Z0-9\\s?!_.-]{0,255}+$", 
+    @Pattern(regexp = "^[a-zA-Z0-9\\s?!_.-]{0,255}+$", 
             message="{contentset.description.invalid}")
     public String getDescription() {
         return description;

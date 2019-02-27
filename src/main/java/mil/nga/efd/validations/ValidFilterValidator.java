@@ -18,31 +18,44 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import javax.validation.ConstraintValidator;
-import javax.validation.Validator;
+import javax.validation.ConstraintValidatorContext;
 
 import mil.nga.efd.domain.FileFilter;
-import mil.nga.efd.validations.ValidFilter;
 
-public class ValidFilterValidator implements ConstraintValidator<ValidFilter, FileFilter> {
+/**
+ * Implementation class for the filter validator.  This class
+ * contains the logic to validate that a String is a valid regular expression 
+ * (REGEX).
+ * 
+ * @author L. Craig Carpenter
+ */
+public class ValidFilterValidator 
+	implements ConstraintValidator<ValidFilter, FileFilter> {
 	
-    @Override
-    public void initialize(ValidFilter arg0) {
-    
-    }
-
-    @Override
-    public boolean isValid(Object arg) {
-        if (arg == null) return false;
-        if (!(arg instanceof FileFilter)) return false;
-        FileFilter f = (FileFilter) arg;
-        if (f.getPatternType() == null || f.getPattern() == null) return false;
-        if (f.getPatternType().equals(FileFilter.Pattern.REGEX)) {
-            try {
-                Pattern.compile(f.getPattern());
-            } catch (PatternSyntaxException pse) {
-                return false;
+    /**
+     * This <code>isValid</code> method will determine whether the filter 
+     * contains a valid regular expression (REGEX).
+     * 
+     * @param filter The <code>FileFilter</code> object to validate.
+     * @param unused Unused
+     * @return True if the filter is valid, false otherwise.
+     */
+	@Override
+	public boolean isValid(FileFilter filter, ConstraintValidatorContext unused) {
+		boolean valid = false;
+		if (filter != null) {
+            if ((filter.getPatternType() != null) && 
+            	(filter.getPattern() != null)) {
+            	if (filter.getPatternType().equals(FileFilter.Pattern.REGEX)) {
+            		try {
+                        Pattern.compile(filter.getPattern());
+                        valid = true;
+                    } catch (PatternSyntaxException pse) {
+                        valid = false;
+                    }
+            	}
             }
-        }
-        return true;
-    }
+		}
+		return valid;
+	}
 }

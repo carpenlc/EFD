@@ -23,20 +23,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.hibernate.validator.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
-import com.solers.delivery.domain.validations.ValidScheduleDuration;
-import com.solers.delivery.domain.validations.ValidScheduleExpression;
+import mil.nga.efd.validations.ValidScheduleDuration;
+import mil.nga.efd.validations.ValidScheduleExpression;
 import com.solers.util.unit.TimeIntervalUnit;
 
 @Entity
 @Table(name = "schedule_expression")
 @ValidScheduleDuration
 public class ScheduleExpression implements Serializable {
-    /**
-     * Serial UID
-     */
-    private static final long serialVersionUID = 10l;
+
+	/**
+	 * Eclipse-generated serialVersionUID
+	 */
+	private static final long serialVersionUID = 4534343899371864583L;
+
 	private static final int EXPRESSION_LEN = 255;
 
     private Long id;
@@ -44,9 +46,10 @@ public class ScheduleExpression implements Serializable {
     private int duration;
     private TimeIntervalUnit durationUnit;
     
-    public ScheduleExpression() { 
-        
-    }
+    /**
+     * Default no-arg constructor
+     */
+    public ScheduleExpression() {  }
     
     public ScheduleExpression (String cronExpression) {
        this.cronExpression = cronExpression;	

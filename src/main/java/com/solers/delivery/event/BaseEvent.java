@@ -26,7 +26,7 @@ import com.solers.lucene.LuceneField;
 public abstract class BaseEvent implements DeliveryEvent {
 
     /**
-     * 
+     * Eclipse-generated serialVersionUID
      */
     private static final long serialVersionUID = -2537456362366212557L;
     protected long timestamp;

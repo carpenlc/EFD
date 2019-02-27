@@ -17,19 +17,28 @@ package com.solers.delivery.content.status;
 import java.io.File;
 import java.math.BigDecimal;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.alerts.AlertService;
 import com.solers.delivery.content.ContentService;
-import com.solers.delivery.domain.Alert;
-import com.solers.delivery.domain.ContentSet;
+
+import mil.nga.efd.domain.Alert;
+import mil.nga.efd.domain.ContentSet;
+
+import mil.nga.efd.controllers.ContentSetDAOHibernate;
 
 /**
  * @author <a href="mailto:michael.yingling@solers.com">Michael Yingling</a>
  */
 public class DiskSpaceAlertTask implements Runnable {
 
-    private static final Logger log = Logger.getLogger(DiskSpaceAlertTask.class);
+	/**
+     * Set up the Log4j system for use throughout the class
+     */        
+    private static final Logger LOGGER = LoggerFactory.getLogger(
+    		DiskSpaceAlertTask.class);
+
     private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100L);
     
     private final BigDecimal threshold;
@@ -37,7 +46,12 @@ public class DiskSpaceAlertTask implements Runnable {
     private final ContentService application;
     private final String root;
 
-    public DiskSpaceAlertTask(ContentService cs, AlertService as, double warning_threshold, String efd_path) {
+    public DiskSpaceAlertTask(
+    		ContentService cs, 
+    		AlertService as, 
+    		double warning_threshold, 
+    		String efd_path) {
+    	
         application = cs;
         alerts = as;
         threshold = BigDecimal.valueOf(warning_threshold);
@@ -46,7 +60,7 @@ public class DiskSpaceAlertTask implements Runnable {
 
     @Override
     public void run() {
-        log.info("Running");
+    	LOGGER.info("Running");
 
         // For measuring the disk space of the EFD installation directory
         measure(root);
@@ -60,8 +74,8 @@ public class DiskSpaceAlertTask implements Runnable {
         File path = new File(cs_path);
         
         if (!path.exists()) {
-            if (log.isDebugEnabled()) {
-                log.debug("Path: "+path+" does not exist.  Will not measure.");
+            if (LOGGER.isDebugEnabled()) {
+            	LOGGER.debug("Path: "+path+" does not exist.  Will not measure.");
             }
             return;
         }
@@ -70,28 +84,28 @@ public class DiskSpaceAlertTask implements Runnable {
         BigDecimal total = BigDecimal.valueOf(getTotalSpace(path));
         
         if (total.equals(BigDecimal.ZERO)) {
-            log.warn("Zero total space for "+cs_path+".  Cannot measure disk space");
+        	LOGGER.warn("Zero total space for "+cs_path+".  Cannot measure disk space");
             return;
         }
         
         BigDecimal used = total.subtract(free);
         BigDecimal inuse = used.divide(total, 2, BigDecimal.ROUND_HALF_DOWN).multiply(ONE_HUNDRED);
         
-        if (log.isDebugEnabled()) {
-            log.debug("Path: "+path);
-            log.debug("Threshold: "+threshold);
-            log.debug("Free: "+free);
-            log.debug("Total: "+total);
-            log.debug("Used: "+used);
-            log.debug("In use: "+inuse);
-            log.debug("Comparison: "+inuse.compareTo(threshold));
+        if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Path: "+path);
+            LOGGER.debug("Threshold: "+threshold);
+            LOGGER.debug("Free: "+free);
+            LOGGER.debug("Total: "+total);
+            LOGGER.debug("Used: "+used);
+            LOGGER.debug("In use: "+inuse);
+            LOGGER.debug("Comparison: "+inuse.compareTo(threshold));
         }
         
         int comparison = inuse.compareTo(threshold);
         // Saves an Alert for the log when the file's size warning threshold is met or exceeded
         if (comparison >= 0) {
             String message = "WARNING: Output path (" + cs_path + ") is " + inuse + "% full.";
-            log.warn(message);
+            LOGGER.warn(message);
             alerts.save(new Alert(message, Alert.AlertType.USER));
         }
     }

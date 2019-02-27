@@ -17,7 +17,8 @@ package com.solers.delivery.event.listener;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.solers.delivery.event.ContentEvent;
 import com.solers.delivery.event.GBSUpdateCompleteEvent;
@@ -30,7 +31,8 @@ import com.solers.util.NamedThreadFactory;
  */
 public class EventLogger implements EventListener {
 
-    private final ExecutorService service = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory());
+    private final ExecutorService service = 
+    		Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory());
     
     @Override
     public void consumerSynchronizationCompleted(SynchronizationEvent event) {
@@ -78,7 +80,9 @@ public class EventLogger implements EventListener {
     
     private static class LogTask implements Runnable {
         
-        private static final Logger log = Logger.getLogger(EventLogger.class);
+    	
+        private static final Logger LOGGER = LoggerFactory.getLogger(
+        		EventLogger.class);
         
         private final Object data;
         
@@ -87,7 +91,7 @@ public class EventLogger implements EventListener {
         }
         
         public void run() {
-            log.info(data);
+            LOGGER.info(data.toString());
         }
     }
 }

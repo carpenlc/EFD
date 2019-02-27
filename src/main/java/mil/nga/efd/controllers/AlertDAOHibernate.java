@@ -1,24 +1,10 @@
-/****************************************************************
- *
- * Solers, Inc. as the author of Enterprise File Delivery 2.1 (EFD 2.1)
- * source code submitted herewith to the Government under contract
- * retains those intellectual property rights as set forth by the Federal 
- * Acquisition Regulations agreement (FAR). The Government has 
- * unlimited rights to redistribute copies of the EFD 2.1 in 
- * executable or source format to support operational installation 
- * and software maintenance. Additionally, the executable or 
- * source may be used or modified for by third parties as 
- * directed by the government.
- *
- * (c) 2009 Solers, Inc.
- ***********************************************************/
 package mil.nga.efd.controllers;
 
 import java.util.Collection;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
@@ -26,7 +12,7 @@ import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import mil.nga.efd.domain.Alert;
 import mil.nga.efd.domain.Alert.AlertType;
@@ -42,19 +28,15 @@ import com.solers.util.Page;
  * 
  * @author L. Craig Carpenter
  */
-public class AlertDAOHibernate implements AlertDAO {
+@Repository
+public class AlertDAOHibernate 
+		extends GenericHibernateDAO<Alert, Long> implements AlertDAO {
 	
 	/**
      * Set up the Log4j system for use throughout the class
      */        
     private static final Logger LOGGER = LoggerFactory.getLogger(
     		AlertDAOHibernate.class);
-    
-	/**
-	 * Inject the EntityManager object.
-	 */
-	@Autowired
-	private EntityManager em;
 	
 	/**
 	 * Default no-arg constructor.
@@ -138,6 +120,28 @@ public class AlertDAOHibernate implements AlertDAO {
         */
     }
 
+    /**
+     * 
+     */
+    public List<Alert> findAll() {
+    	
+    	List<Alert> results = null;
+    	
+    	if (em != null) {
+    		CriteriaBuilder cb = em.getCriteriaBuilder();
+    		CriteriaQuery<Alert> cq = cb.createQuery(Alert.class);
+    		Root<Alert> root = cq.from(Alert.class);
+    		CriteriaQuery<Alert> all = cq.select(root);
+    		TypedQuery<Alert> allQuery = em.createQuery(all);
+    		results = allQuery.getResultList();
+    	}
+    	else {
+    		LOGGER.error("The EntityManager object was not injected.  Unable "
+				+ "to connect to the target database.  No records selected "
+    			+ "from the Alert table.");
+    	}
+    	return results;
+    }
     /**
      * Remove a list of IDs from the target data source.
      * 

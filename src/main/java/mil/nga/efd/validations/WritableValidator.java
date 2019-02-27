@@ -1,41 +1,51 @@
-/****************************************************************
- *
- * Solers, Inc. as the author of Enterprise File Delivery 2.1 (EFD 2.1)
- * source code submitted herewith to the Government under contract
- * retains those intellectual property rights as set forth by the Federal 
- * Acquisition Regulations agreement (FAR). The Government has 
- * unlimited rights to redistribute copies of the EFD 2.1 in 
- * executable or source format to support operational installation 
- * and software maintenance. Additionally, the executable or 
- * source may be used or modified for by third parties as 
- * directed by the government.
- *
- * (c) 2009 Solers, Inc.
- ***********************************************************/
-package com.solers.delivery.domain.validations.validators;
+package mil.nga.efd.validations;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import org.hibernate.validator.Validator;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-import com.solers.delivery.domain.validations.Writable;
 
-public class WritableValidator implements Validator<Writable> {
-    @Override
-    public void initialize(Writable arg) {
-        
-    }
+/**
+ * Class implementing a method to test whether a target String 
+ * represents an on-disk location that is writable.  This class was 
+ * completely re-written due to massive changes in the way validators
+ * are now constructed.  
+ * 
+ * @author L. Craig Carpenter
+ */
+public class WritableValidator 
+		implements ConstraintValidator<Writable, String> {
 
-    @Override
-    public boolean isValid(Object arg) {
-        if (arg == null) return false;
-        String path = (String) arg;
-        
-        File file = new File(path);
-        if (!file.exists()) {
-            return file.mkdirs();
-        } else {
-            return file.canWrite();
-        }
-    }
+	/**
+	 * This method assumes the input is a String that defines the path to 
+	 * a target file or directory.  It then checks to see if the target 
+	 * location is writable. 
+	 * 
+	 * @param path A string representing a path to validate.
+     * @param unused Unused
+	 * @return True if the target is writeable, false otherwise.
+	 */
+	@Override
+	public boolean isValid(String path, ConstraintValidatorContext unused) {
+		boolean valid = false;
+		if ((path != null) && (!path.isEmpty())) {
+			Path p = Paths.get(path);
+			if (Files.exists(p)) {
+				valid = Files.isWritable(p);
+			}
+			else {
+				try {
+					Files.createDirectories(p);
+					valid = true;
+				}
+				catch (IOException ioe) { }
+			}
+		}
+		return valid;
+	}
+
 }

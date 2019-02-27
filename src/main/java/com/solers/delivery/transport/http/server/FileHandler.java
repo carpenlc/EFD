@@ -39,7 +39,7 @@ import org.mortbay.jetty.EofException;
 import org.mortbay.util.TypeUtil;
 
 import com.solers.delivery.content.status.SupplierProgress;
-import com.solers.delivery.domain.ContentSet;
+
 import com.solers.delivery.event.ContentEvent;
 import com.solers.delivery.event.EventManager;
 import com.solers.delivery.event.SynchronizationEvent;
@@ -51,6 +51,8 @@ import com.solers.delivery.transport.http.TransferType;
 import com.solers.delivery.transport.http.monitor.TransferMonitor;
 import com.solers.util.Callback;
 import com.solers.util.StreamCopier;
+
+import mil.nga.efd.domain.ContentSet;
 
 public class FileHandler extends BaseHandler {
 
